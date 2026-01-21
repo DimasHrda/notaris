@@ -1,0 +1,2128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Notaris</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-blue: #0f2c5f;
+            --secondary-blue: #1a4a8f;
+            --accent-blue: #2a6bc5;
+            --light-blue: #e3f2fd;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            min-height: 100vh;
+            position: fixed;
+            width: 250px;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .navbar-custom {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 20px;
+        }
+        
+        .content-wrapper {
+            padding: 20px;
+        }
+        
+        .logo {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .logo h3 {
+            font-weight: 700;
+            margin: 0;
+            color: white;
+        }
+        
+        .logo i {
+            color: #64b5f6;
+            margin-right: 10px;
+        }
+        
+        .nav-sidebar {
+            padding: 20px 0;
+        }
+        
+        .nav-sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .nav-sidebar .nav-link:hover, .nav-sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: #64b5f6;
+        }
+        
+        .nav-sidebar .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .user-profile {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #64b5f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .stat-card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid;
+            height: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card-akad {
+            border-left-color: #1976D2;
+        }
+        
+        .stat-card-pajak {
+            border-left-color: #EF6C00;
+        }
+        
+        .stat-card-balik-nama {
+            border-left-color: #388E3C;
+        }
+        
+        .stat-card-cek-ht {
+            border-left-color: #7B1FA2;
+        }
+        
+        .stat-card-pengembalian {
+            border-left-color: #0097A7;
+        }
+        
+        .stat-card-selesai {
+            border-left-color: #3F51B5;
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        .icon-akad {
+            background-color: #1976D2;
+        }
+        
+        .icon-pajak {
+            background-color: #EF6C00;
+        }
+        
+        .icon-balik-nama {
+            background-color: #388E3C;
+        }
+        
+        .icon-cek-ht {
+            background-color: #7B1FA2;
+        }
+        
+        .icon-pengembalian {
+            background-color: #0097A7;
+        }
+        
+        .icon-selesai {
+            background-color: #3F51B5;
+        }
+        
+        .timeline-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: #e0e0e0;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        
+        .timeline-step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 16%;
+        }
+        
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: white;
+            border: 4px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 1.5rem;
+            color: #777;
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-step.active .step-icon {
+            background-color: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: white;
+            box-shadow: 0 0 0 8px rgba(42, 107, 197, 0.2);
+        }
+        
+        .timeline-step.completed .step-icon {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+        }
+        
+        .step-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .step-count {
+            font-size: 0.85rem;
+            color: #777;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-akad {
+            background-color: #E3F2FD;
+            color: #1976D2;
+        }
+        
+        .status-pajak {
+            background-color: #FFF3E0;
+            color: #EF6C00;
+        }
+        
+        .status-balik-nama {
+            background-color: #E8F5E9;
+            color: #388E3C;
+        }
+        
+        .status-cek-ht {
+            background-color: #F3E5F5;
+            color: #7B1FA2;
+        }
+        
+        .status-pengembalian {
+            background-color: #E0F7FA;
+            color: #0097A7;
+        }
+        
+        .status-selesai {
+            background-color: #E8EAF6;
+            color: #3F51B5;
+        }
+        
+        .btn-custom-primary {
+            background: linear-gradient(to right, var(--secondary-blue), var(--accent-blue));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-custom-primary:hover {
+            background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 74, 143, 0.3);
+        }
+        
+        .card-custom {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-header-custom {
+            background-color: white;
+            border-bottom: 1px solid #eee;
+            padding: 20px;
+            border-radius: 12px 12px 0 0 !important;
+        }
+        
+        .table-custom th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #eaeaea;
+            color: #333;
+            font-weight: 600;
+            padding: 15px;
+        }
+        
+        .table-custom td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+        
+        .table-custom tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .form-custom .form-control:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(42, 107, 197, 0.1);
+        }
+        
+        .form-custom .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .role-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .role-admin {
+            background-color: #E3F2FD;
+            color: #1976D2;
+        }
+        
+        .role-staff-pajak {
+            background-color: #FFF3E0;
+            color: #EF6C00;
+        }
+        
+        .role-staff-balik-nama {
+            background-color: #E8F5E9;
+            color: #388E3C;
+        }
+        
+        .role-staff-ht {
+            background-color: #F3E5F5;
+            color: #7B1FA2;
+        }
+        
+        .role-staff-pengembalian {
+            background-color: #E0F7FA;
+            color: #0097A7;
+        }
+        
+        .page-title {
+            color: var(--secondary-blue);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .page-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .timeline {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .timeline-step {
+                width: 30%;
+                margin-bottom: 20px;
+            }
+            
+            .timeline::before {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .timeline-step {
+                width: 45%;
+            }
+            
+            .content-wrapper {
+                padding: 15px;
+            }
+        }
+        
+        .breadcrumb-custom {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        
+        .breadcrumb-custom .breadcrumb-item a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .breadcrumb-custom .breadcrumb-item.active {
+            color: #666;
+        }
+        
+        .progress-custom {
+            height: 10px;
+            border-radius: 10px;
+        }
+        
+        .progress-akad {
+            background-color: #1976D2;
+        }
+        
+        .progress-pajak {
+            background-color: #EF6C00;
+        }
+        
+        .progress-balik-nama {
+            background-color: #388E3C;
+        }
+        
+        .progress-cek-ht {
+            background-color: #7B1FA2;
+        }
+        
+        .progress-pengembalian {
+            background-color: #0097A7;
+        }
+        
+        .progress-selesai {
+            background-color: #3F51B5;
+        }
+        
+        /* Deadline Styling */
+        .deadline-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .deadline-normal {
+            background-color: #E8F5E9;
+            color: #388E3C;
+        }
+        
+        .deadline-warning {
+            background-color: #FFF3E0;
+            color: #EF6C00;
+        }
+        
+        .deadline-danger {
+            background-color: #FFEBEE;
+            color: #D32F2F;
+        }
+        
+        /* Alert Container */
+        .alert-container {
+            margin-bottom: 20px;
+        }
+        
+        .alert-warning-custom {
+            background-color: #FFF3E0;
+            border-color: #FFE0B2;
+            color: #EF6C00;
+        }
+        
+        .alert-danger-custom {
+            background-color: #FFEBEE;
+            border-color: #FFCDD2;
+            color: #D32F2F;
+        }
+        
+        .alert-success-custom {
+            background-color: #E8F5E9;
+            border-color: #C8E6C9;
+            color: #388E3C;
+        }
+        
+        /* Filter Controls */
+        .filter-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        /* Staff Role Specific Colors */
+        .role-staff-pajak-icon {
+            background-color: #EF6C00;
+            color: white;
+        }
+        
+        .role-staff-balik-nama-icon {
+            background-color: #388E3C;
+            color: white;
+        }
+        
+        .role-staff-ht-icon {
+            background-color: #7B1FA2;
+            color: white;
+        }
+        
+        .role-staff-pengembalian-icon {
+            background-color: #0097A7;
+            color: white;
+        }
+        
+        .staff-role-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Halaman Dashboard -->
+    <div id="dashboard-page">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h3><i class="fas fa-balance-scale"></i> NSR</h3>
+            </div>
+            
+            <nav class="nav-sidebar">
+                <div class="nav flex-column">
+                    <a class="nav-link active" href="#" data-page="dashboard">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a class="nav-link" href="#" data-page="berkas">
+                        <i class="fas fa-file-contract"></i> Berkas
+                    </a>
+                    <a class="nav-link" href="#" data-page="laporan">
+                        <i class="fas fa-chart-bar"></i> Laporan
+                    </a>
+                    <a class="nav-link" href="#" data-page="staff">
+                        <i class="fas fa-users"></i> Staff
+                    </a>
+                    <a class="nav-link" href="#" data-page="pengaturan">
+                        <i class="fas fa-cog"></i> Pengaturan
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="user-profile">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">AN</div>
+                    <div>
+                        <div id="userName" class="fw-bold">Admin Notaris</div>
+                        <div id="userRole" class="small">Super Admin</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navbar -->
+            <nav class="navbar-custom">
+                <div class="container-fluid d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 id="pageTitle" class="mb-0 fw-bold text-dark">Dashboard</h4>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb breadcrumb-custom mb-0">
+                                <li class="breadcrumb-item"><a href="#" data-page="dashboard">Home</a></li>
+                                <li class="breadcrumb-item active" id="breadcrumbCurrent">Dashboard</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <button class="btn btn-custom-primary" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </nav>
+            
+            <!-- Content Area -->
+            <div class="content-wrapper">
+                <!-- Alert Peringatan Deadline -->
+                <div class="alert-container" id="deadlineAlerts">
+                    <!-- Alerts akan dimuat secara dinamis -->
+                </div>
+                
+                <!-- Dashboard Content -->
+                <div id="dashboard-content">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h3 class="page-title">Dashboard Admin Notaris</h3>
+                            <p class="page-subtitle">Monitor dan kelola alur pemberkasan notaris</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button class="btn btn-custom-primary" id="addBerkasBtn" data-bs-toggle="modal" data-bs-target="#tambahBerkasModal">
+                                <i class="fas fa-plus"></i> Tambah Berkas Baru
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-4 col-lg-2 mb-3">
+                            <div class="card stat-card stat-card-akad h-100">
+                                <div class="card-body">
+                                    <div class="stat-icon icon-akad">
+                                        <i class="fas fa-file-contract"></i>
+                                    </div>
+                                    <h4 class="stat-value">48</h4>
+                                    <p class="stat-label">Total Berkas</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-lg-2 mb-3">
+                            <div class="card stat-card stat-card-pajak h-100">
+                                <div class="card-body">
+                                    <div class="stat-icon icon-pajak">
+                                        <i class="fas fa-gavel"></i>
+                                    </div>
+                                    <h4 class="stat-value">12</h4>
+                                    <p class="stat-label">Proses Akad</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-lg-2 mb-3">
+                            <div class="card stat-card stat-card-balik-nama h-100">
+                                <div class="card-body">
+                                    <div class="stat-icon icon-balik-nama">
+                                        <i class="fas fa-receipt"></i>
+                                    </div>
+                                    <h4 class="stat-value">8</h4>
+                                    <p class="stat-label">Proses Pajak</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-lg-2 mb-3">
+                            <div class="card stat-card stat-card-cek-ht h-100">
+                                <div class="card-body">
+                                    <div class="stat-icon icon-cek-ht">
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </div>
+                                    <h4 class="stat-value">6</h4>
+                                    <p class="stat-label">Balik Nama</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-lg-2 mb-3">
+                            <div class="card stat-card stat-card-pengembalian h-100">
+                                <div class="card-body">
+                                    <div class="stat-icon icon-pengembalian">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <h4 class="stat-value">15</h4>
+                                    <p class="stat-label">Cek HT</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-lg-2 mb-3">
+                            <div class="card stat-card stat-card-selesai h-100">
+                                <div class="card-body">
+                                    <div class="stat-icon icon-selesai">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <h4 class="stat-value">7</h4>
+                                    <p class="stat-label">Selesai</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline Alur Pemberkasan -->
+                    <div class="timeline-container mb-4">
+                        <h3 class="page-title mb-4">Alur Pemberkasan Notaris</h3>
+                        <div class="timeline">
+                            <div class="timeline-step active">
+                                <div class="step-icon">
+                                    <i class="fas fa-file-signature"></i>
+                                </div>
+                                <div class="step-label">Akad</div>
+                                <div class="step-count">12 Berkas</div>
+                            </div>
+                            
+                            <div class="timeline-step">
+                                <div class="step-icon">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                </div>
+                                <div class="step-label">Pajak</div>
+                                <div class="step-count">8 Berkas</div>
+                            </div>
+                            
+                            <div class="timeline-step">
+                                <div class="step-icon">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <div class="step-label">Balik Nama</div>
+                                <div class="step-count">6 Berkas</div>
+                            </div>
+                            
+                            <div class="timeline-step">
+                                <div class="step-icon">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                                <div class="step-label">Cek HT</div>
+                                <div class="step-count">15 Berkas</div>
+                            </div>
+                            
+                            <div class="timeline-step">
+                                <div class="step-icon">
+                                    <i class="fas fa-undo-alt"></i>
+                                </div>
+                                <div class="step-label">Pengembalian</div>
+                                <div class="step-count">0 Berkas</div>
+                            </div>
+                            
+                            <div class="timeline-step completed">
+                                <div class="step-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="step-label">Selesai</div>
+                                <div class="step-count">7 Berkas</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tabel Data Berkas -->
+                    <div class="card card-custom">
+                        <div class="card-header card-header-custom">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Daftar Berkas Aktif</h5>
+                                <div class="input-group" style="width: 300px;">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Cari berkas...">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-custom table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>No. Berkas</th>
+                                            <th>Nama Klien</th>
+                                            <th>Jenis Akta</th>
+                                            <th>Tanggal Masuk</th>
+                                            <th>Deadline</th>
+                                            <th>Status</th>
+                                            <th>Progres</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="berkasTableBody">
+                                        <!-- Data berkas akan dimuat di sini -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Berkas Content -->
+                <div id="berkas-content" style="display: none;">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h3 class="page-title">Manajemen Berkas</h3>
+                            <p class="page-subtitle">Kelola semua berkas notaris</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button class="btn btn-custom-primary" id="tambahBerkasBtn" data-bs-toggle="modal" data-bs-target="#tambahBerkasModal">
+                                <i class="fas fa-plus"></i> Tambah Berkas
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter -->
+                    <div class="filter-container mb-4">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Filter Status</label>
+                                <select class="form-select form-custom" id="filterStatus">
+                                    <option value="">Semua Status</option>
+                                    <option value="akad">Proses Akad</option>
+                                    <option value="pajak">Proses Pajak</option>
+                                    <option value="balik-nama">Balik Nama</option>
+                                    <option value="cek-ht">Cek HT</option>
+                                    <option value="pengembalian">Pengembalian</option>
+                                    <option value="selesai">Selesai</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Filter Deadline</label>
+                                <select class="form-select form-custom" id="filterDeadline">
+                                    <option value="">Semua</option>
+                                    <option value="normal">Normal</option>
+                                    <option value="warning">Mendekati Deadline</option>
+                                    <option value="danger">Terlambat</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Tanggal Mulai</label>
+                                <input type="date" class="form-control form-custom" id="filterStartDate">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Tanggal Selesai</label>
+                                <input type="date" class="form-control form-custom" id="filterEndDate">
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button class="btn btn-outline-secondary me-2" id="resetFilterBtn">
+                                <i class="fas fa-redo"></i> Reset Filter
+                            </button>
+                            <button class="btn btn-custom-primary" id="applyFilterBtn">
+                                <i class="fas fa-filter"></i> Terapkan Filter
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card card-custom">
+                        <div class="card-header card-header-custom">
+                            <h5 class="mb-0">Daftar Berkas</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-custom table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>No. Berkas</th>
+                                            <th>Nama Klien</th>
+                                            <th>Jenis Akta</th>
+                                            <th>Tanggal Masuk</th>
+                                            <th>Deadline</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="berkasTable">
+                                        <!-- Data berkas akan dimuat di sini -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Laporan Content -->
+                <div id="laporan-content" style="display: none;">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h3 class="page-title">Laporan Statistik</h3>
+                            <p class="page-subtitle">Analisis data dan statistik pemberkasan</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button class="btn btn-custom-primary" id="exportLaporanBtn">
+                                <i class="fas fa-download"></i> Export Laporan
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card card-custom h-100">
+                                <div class="card-header card-header-custom">
+                                    <h5 class="mb-0">Statistik Berkas per Bulan</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="chartBulanan" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card card-custom h-100">
+                                <div class="card-header card-header-custom">
+                                    <h5 class="mb-0">Distribusi Status Berkas</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="chartStatus" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card card-custom">
+                        <div class="card-header card-header-custom">
+                            <h5 class="mb-0">Rekap Berkas per Staff</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-custom table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Staff</th>
+                                            <th>Role</th>
+                                            <th>Berkas Diproses</th>
+                                            <th>Berkas Selesai</th>
+                                            <th>Rata-rata Waktu</th>
+                                            <th>Produktivitas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="laporanStaffTable">
+                                        <!-- Data laporan staff akan dimuat di sini -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Staff Content -->
+                <div id="staff-content" style="display: none;">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h3 class="page-title">Manajemen Staff</h3>
+                            <p class="page-subtitle">Kelola data staff notaris</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button class="btn btn-custom-primary" id="tambahStaffBtn" data-bs-toggle="modal" data-bs-target="#tambahStaffModal">
+                                <i class="fas fa-user-plus"></i> Tambah Staff
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card card-custom">
+                        <div class="card-header card-header-custom">
+                            <h5 class="mb-0">Daftar Staff</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-custom table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Nama</th>
+                                            <th>Username</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Berkas Aktif</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="staffTable">
+                                        <!-- Data staff akan dimuat di sini -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pengaturan Content -->
+                <div id="pengaturan-content" style="display: none;">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h3 class="page-title">Pengaturan Sistem</h3>
+                            <p class="page-subtitle">Konfigurasi sistem notaris</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="card card-custom h-100">
+                                <div class="card-header card-header-custom">
+                                    <h5 class="mb-0">Informasi Sistem</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nama Sistem</label>
+                                        <input type="text" class="form-control form-custom" value="NotarisPro v1.2.0" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Versi</label>
+                                        <input type="text" class="form-control form-custom" value="1.2.0" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Total Berkas</label>
+                                        <input type="text" class="form-control form-custom" value="48" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Total Staff</label>
+                                        <input type="text" class="form-control form-custom" value="5" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-8 mb-4">
+                            <div class="card card-custom h-100">
+                                <div class="card-header card-header-custom">
+                                    <h5 class="mb-0">Pengaturan Deadline</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="pengaturanForm">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Nama Perusahaan</label>
+                                                <input type="text" class="form-control form-custom" value="Kantor Notaris Pro">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Email Notifikasi</label>
+                                                <input type="email" class="form-control form-custom" value="notifikasi@notarispro.com">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label class="form-label">Waktu Peringatan (hari)</label>
+                                                <input type="number" class="form-control form-custom" id="warningDays" value="7" min="1" max="30">
+                                                <small class="text-muted">Tampilkan peringatan X hari sebelum deadline</small>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label class="form-label">Durasi Normal (hari)</label>
+                                                <input type="number" class="form-control form-custom" id="normalDuration" value="30" min="1" max="90">
+                                                <small class="text-muted">Durasi normal penyelesaian berkas</small>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label class="form-label">Notifikasi Deadline</label>
+                                                <select class="form-select form-custom" id="notificationEnabled">
+                                                    <option value="1" selected>Aktif</option>
+                                                    <option value="0">Nonaktif</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="autoCalculateDeadline" checked>
+                                                <label class="form-check-label" for="autoCalculateDeadline">
+                                                    Hitung deadline otomatis berdasarkan tanggal masuk
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-custom-primary">
+                                            <i class="fas fa-save"></i> Simpan Pengaturan
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah Staff -->
+    <div class="modal fade" id="tambahStaffModal" tabindex="-1" aria-labelledby="tambahStaffModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tambahStaffModalLabel">Tambah Staff Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="tambahStaffForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="staffNama" class="form-label">Nama Lengkap</label>
+                                <input type="text" class="form-control form-custom" id="staffNama" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="staffUsername" class="form-label">Username</label>
+                                <input type="text" class="form-control form-custom" id="staffUsername" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="staffEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control form-custom" id="staffEmail" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="staffRole" class="form-label">Role</label>
+                                <select class="form-select form-custom" id="staffRole" required>
+                                    <option value="">Pilih Role</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="staff_pajak">Staff Pajak</option>
+                                    <option value="staff_balik_nama">Staff Balik Nama</option>
+                                    <option value="staff_ht">Staff HT</option>
+                                    <option value="staff_pengembalian">Staff Pengembalian</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="staffPassword" class="form-label">Password</label>
+                                <input type="password" class="form-control form-custom" id="staffPassword" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="staffConfirmPassword" class="form-label">Konfirmasi Password</label>
+                                <input type="password" class="form-control form-custom" id="staffConfirmPassword" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="staffCatatan" class="form-label">Catatan (Opsional)</label>
+                            <textarea class="form-control form-custom" id="staffCatatan" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-custom-primary" id="simpanStaffBtn">Simpan Staff</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah Berkas -->
+    <div class="modal fade" id="tambahBerkasModal" tabindex="-1" aria-labelledby="tambahBerkasModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tambahBerkasModalLabel">Tambah Berkas Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="tambahBerkasForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="berkasNo" class="form-label">No. Berkas</label>
+                                <input type="text" class="form-control form-custom" id="berkasNo" value="NT-2023-" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="berkasKlien" class="form-label">Nama Klien</label>
+                                <input type="text" class="form-control form-custom" id="berkasKlien" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="berkasJenis" class="form-label">Jenis Akta</label>
+                                <select class="form-select form-custom" id="berkasJenis" required>
+                                    <option value="">Pilih Jenis Akta</option>
+                                    <option value="Akta Jual Beli">Akta Jual Beli</option>
+                                    <option value="Akta Hibah">Akta Hibah</option>
+                                    <option value="Akta Pengikatan">Akta Pengikatan</option>
+                                    <option value="Akta Perjanjian">Akta Perjanjian</option>
+                                    <option value="Akta Wasiat">Akta Wasiat</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="berkasTanggal" class="form-label">Tanggal Masuk</label>
+                                <input type="date" class="form-control form-custom" id="berkasTanggal" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="berkasDeadline" class="form-label">Deadline</label>
+                                <input type="date" class="form-control form-custom" id="berkasDeadline">
+                                <small class="text-muted">Kosongkan untuk menghitung otomatis (30 hari dari tanggal masuk)</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="berkasStatus" class="form-label">Status</label>
+                                <select class="form-select form-custom" id="berkasStatus" required>
+                                    <option value="akad">Proses Akad</option>
+                                    <option value="pajak">Proses Pajak</option>
+                                    <option value="balik-nama">Balik Nama</option>
+                                    <option value="cek-ht">Cek HT</option>
+                                    <option value="pengembalian">Pengembalian</option>
+                                    <option value="selesai">Selesai</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="berkasCatatan" class="form-label">Catatan (Opsional)</label>
+                            <textarea class="form-control form-custom" id="berkasCatatan" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-custom-primary" id="simpanBerkasBtn">Simpan Berkas</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Data aplikasi
+        const appData = {
+            currentUser: {
+                name: "Admin Notaris",
+                role: "admin"
+            },
+            settings: {
+                warningDays: 7,
+                normalDuration: 30,
+                notificationEnabled: true,
+                autoCalculateDeadline: true
+            },
+            staffList: [
+                { 
+                    id: 1, 
+                    nama: "Admin Notaris", 
+                    username: "admin", 
+                    email: "admin@notaris.com", 
+                    role: "admin", 
+                    berkasAktif: 48, 
+                    status: "Aktif" 
+                },
+                { 
+                    id: 2, 
+                    nama: "Budi Santoso", 
+                    username: "staff_pajak1", 
+                    email: "pajak@notaris.com", 
+                    role: "staff_pajak", 
+                    berkasAktif: 12, 
+                    status: "Aktif" 
+                },
+                { 
+                    id: 3, 
+                    nama: "Sari Dewi", 
+                    username: "staff_balik_nama1", 
+                    email: "baliknama@notaris.com", 
+                    role: "staff_balik_nama", 
+                    berkasAktif: 8, 
+                    status: "Aktif" 
+                },
+                { 
+                    id: 4, 
+                    nama: "Agus Wijaya", 
+                    username: "staff_ht1", 
+                    email: "ht@notaris.com", 
+                    role: "staff_ht", 
+                    berkasAktif: 6, 
+                    status: "Aktif" 
+                },
+                { 
+                    id: 5, 
+                    nama: "Rina Andini", 
+                    username: "staff_pengembalian1", 
+                    email: "pengembalian@notaris.com", 
+                    role: "staff_pengembalian", 
+                    berkasAktif: 0, 
+                    status: "Aktif" 
+                }
+            ],
+            berkasList: [
+                { id: 1, noBerkas: "NT-2023-001", namaKlien: "Budi Santoso", jenisAkta: "Akta Jual Beli", tglMasuk: "2023-03-15", deadline: "2023-04-14", status: "akad", progres: 20 },
+                { id: 2, noBerkas: "NT-2023-002", namaKlien: "Sari Dewi", jenisAkta: "Akta Hibah", tglMasuk: "2023-03-10", deadline: "2023-04-09", status: "pajak", progres: 40 },
+                { id: 3, noBerkas: "NT-2023-003", namaKlien: "Agus Wijaya", jenisAkta: "Akta Pengikatan", tglMasuk: "2023-02-28", deadline: "2023-03-30", status: "balik-nama", progres: 60 },
+                { id: 4, noBerkas: "NT-2023-004", namaKlien: "Dian Anggraini", jenisAkta: "Akta Hibah", tglMasuk: "2023-03-22", deadline: "2023-04-21", status: "cek-ht", progres: 80 },
+                { id: 5, noBerkas: "NT-2023-005", namaKlien: "Rudi Hartono", jenisAkta: "Akta Jual Beli", tglMasuk: "2023-02-15", deadline: "2023-03-17", status: "pengembalian", progres: 90 },
+                { id: 6, noBerkas: "NT-2023-006", namaKlien: "Linda Permata", jenisAkta: "Akta Pengikatan", tglMasuk: "2023-01-28", deadline: "2023-02-27", status: "selesai", progres: 100 }
+            ]
+        };
+
+        // Inisialisasi aplikasi
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set tanggal hari ini untuk input tanggal
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('berkasTanggal').value = today;
+            
+            // Set deadline default (30 hari dari sekarang)
+            const defaultDeadline = new Date();
+            defaultDeadline.setDate(defaultDeadline.getDate() + 30);
+            document.getElementById('berkasDeadline').value = defaultDeadline.toISOString().split('T')[0];
+            
+            // Navigation
+            document.querySelectorAll('.nav-link[data-page]').forEach(link => {
+                link.addEventListener('click', handleNavigation);
+            });
+            
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+            
+            // Staff Modal
+            document.getElementById('simpanStaffBtn').addEventListener('click', tambahStaff);
+            
+            // Berkas Modal
+            document.getElementById('simpanBerkasBtn').addEventListener('click', tambahBerkas);
+            
+            // Filter
+            document.getElementById('applyFilterBtn').addEventListener('click', applyFilter);
+            document.getElementById('resetFilterBtn').addEventListener('click', resetFilter);
+            
+            // Pengaturan
+            document.getElementById('pengaturanForm').addEventListener('submit', saveSettings);
+            
+            // Inisialisasi data
+            initDashboard();
+            updateDeadlineAlerts();
+            
+            // Update user info
+            document.getElementById('userAvatar').textContent = getInitials(appData.currentUser.name);
+        });
+        
+        // Handle Navigation
+        function handleNavigation(e) {
+            e.preventDefault();
+            
+            const targetPage = this.getAttribute('data-page');
+            const pageTitle = this.textContent.trim();
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            this.classList.add('active');
+            
+            // Update page title
+            document.getElementById('pageTitle').textContent = pageTitle;
+            document.getElementById('breadcrumbCurrent').textContent = pageTitle;
+            
+            // Show target page content
+            document.querySelectorAll('[id$="-content"]').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            document.getElementById(`${targetPage}-content`).style.display = 'block';
+            
+            // Load data for specific page
+            switch(targetPage) {
+                case 'dashboard':
+                    initDashboard();
+                    break;
+                case 'berkas':
+                    loadBerkasData();
+                    break;
+                case 'laporan':
+                    loadLaporanData();
+                    break;
+                case 'staff':
+                    loadStaffData();
+                    break;
+                case 'pengaturan':
+                    loadPengaturanData();
+                    break;
+            }
+        }
+        
+        // Initialize Dashboard
+        function initDashboard() {
+            loadBerkasTable();
+            updateStats();
+        }
+        
+        // Load berkas data to table
+        function loadBerkasTable() {
+            const tableBody = document.getElementById('berkasTableBody');
+            tableBody.innerHTML = '';
+            
+            appData.berkasList.forEach(berkas => {
+                const row = createBerkasRow(berkas, false);
+                tableBody.appendChild(row);
+            });
+            
+            // Setup search
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const rows = tableBody.querySelectorAll('tr');
+                
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        }
+        
+        // Load berkas data for berkas page
+        function loadBerkasData() {
+            const tableBody = document.getElementById('berkasTable');
+            tableBody.innerHTML = '';
+            
+            appData.berkasList.forEach((berkas, index) => {
+                const row = createBerkasRow(berkas, true, index + 1);
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // Create berkas row
+        function createBerkasRow(berkas, showNumber = false, index = 0) {
+            const row = document.createElement('tr');
+            const statusLabel = getStatusLabel(berkas.status);
+            const progressColor = getProgressColor(berkas.status);
+            const deadlineInfo = getDeadlineInfo(berkas.deadline);
+            
+            let rowContent = '';
+            
+            if (showNumber) {
+                rowContent += `<td>${index}</td>`;
+            }
+            
+            rowContent += `
+                <td>${berkas.noBerkas}</td>
+                <td>${berkas.namaKlien}</td>
+                <td>${berkas.jenisAkta}</td>
+                <td>${formatDate(berkas.tglMasuk)}</td>
+            `;
+            
+            if (!showNumber) {
+                rowContent += `<td><span class="deadline-badge ${deadlineInfo.class}">${deadlineInfo.text}</span></td>`;
+            } else {
+                rowContent += `<td>${formatDate(berkas.deadline)}</td>`;
+            }
+            
+            rowContent += `
+                <td><span class="status-badge ${statusLabel.class}">${statusLabel.text}</span></td>
+            `;
+            
+            if (!showNumber) {
+                rowContent += `
+                    <td>
+                        <div class="progress progress-custom">
+                            <div class="progress-bar ${progressColor}" role="progressbar" style="width: ${berkas.progres}%" aria-valuenow="${berkas.progres}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </td>
+                `;
+            }
+            
+            rowContent += `
+                <td>
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="viewBerkas(${berkas.id})">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning me-1" onclick="editBerkas(${berkas.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    ${showNumber ? `<button class="btn btn-sm btn-outline-danger" onclick="deleteBerkas(${berkas.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>` : ''}
+                </td>
+            `;
+            
+            row.innerHTML = rowContent;
+            
+            // Add warning class if deadline is approaching or passed
+            if (deadlineInfo.class.includes('warning')) {
+                row.style.backgroundColor = 'rgba(255, 243, 224, 0.3)';
+            } else if (deadlineInfo.class.includes('danger')) {
+                row.style.backgroundColor = 'rgba(255, 235, 238, 0.3)';
+            }
+            
+            return row;
+        }
+        
+        // Load laporan data
+        function loadLaporanData() {
+            // Setup chart bulanan
+            const ctxBulanan = document.getElementById('chartBulanan').getContext('2d');
+            new Chart(ctxBulanan, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'Berkas Masuk',
+                        data: [12, 19, 15, 25, 22, 30, 28],
+                        borderColor: '#2a6bc5',
+                        backgroundColor: 'rgba(42, 107, 197, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }, {
+                        label: 'Berkas Selesai',
+                        data: [8, 12, 10, 18, 15, 22, 20],
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+            
+            // Setup chart status
+            const ctxStatus = document.getElementById('chartStatus').getContext('2d');
+            new Chart(ctxStatus, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Akad', 'Pajak', 'Balik Nama', 'Cek HT', 'Pengembalian', 'Selesai'],
+                    datasets: [{
+                        data: [12, 8, 6, 15, 0, 7],
+                        backgroundColor: [
+                            '#1976D2',
+                            '#EF6C00',
+                            '#388E3C',
+                            '#7B1FA2',
+                            '#0097A7',
+                            '#3F51B5'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        }
+                    }
+                }
+            });
+            
+            // Load staff laporan table
+            const tableBody = document.getElementById('laporanStaffTable');
+            tableBody.innerHTML = '';
+            
+            appData.staffList.forEach(staff => {
+                if (staff.role !== 'admin') {
+                    const row = document.createElement('tr');
+                    const roleName = getRoleName(staff.role);
+                    const roleClass = getRoleClass(staff.role);
+                    
+                    // Calculate productivity (random for demo)
+                    const berkasSelesai = Math.floor(Math.random() * 10) + 1;
+                    const rataWaktu = Math.floor(Math.random() * 5) + 1;
+                    const produktivitas = Math.floor(Math.random() * 30) + 70;
+                    
+                    row.innerHTML = `
+                        <td>${staff.nama}</td>
+                        <td><span class="role-badge ${roleClass}">${roleName}</span></td>
+                        <td>${staff.berkasAktif}</td>
+                        <td>${berkasSelesai}</td>
+                        <td>${rataWaktu} hari</td>
+                        <td>
+                            <div class="progress progress-custom">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: ${produktivitas}%" aria-valuenow="${produktivitas}" aria-valuemin="0" aria-valuemax="100">${produktivitas}%</div>
+                            </div>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                }
+            });
+        }
+        
+        // Load staff data
+        function loadStaffData() {
+            const tableBody = document.getElementById('staffTable');
+            tableBody.innerHTML = '';
+            
+            appData.staffList.forEach((staff, index) => {
+                const row = document.createElement('tr');
+                const roleName = getRoleName(staff.role);
+                const roleClass = getRoleClass(staff.role);
+                const roleIconClass = getRoleIconClass(staff.role);
+                const roleIcon = getRoleIcon(staff.role);
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="staff-role-icon ${roleIconClass}">
+                                <i class="${roleIcon}"></i>
+                            </div>
+                            <div>${staff.nama}</div>
+                        </div>
+                    </td>
+                    <td>${staff.username}</td>
+                    <td>${staff.email}</td>
+                    <td><span class="role-badge ${roleClass}">${roleName}</span></td>
+                    <td>${staff.berkasAktif}</td>
+                    <td>
+                        <span class="badge bg-success">${staff.status}</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="viewStaff(${staff.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-warning me-1" onclick="editStaff(${staff.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteStaff(${staff.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // Load pengaturan data
+        function loadPengaturanData() {
+            document.getElementById('warningDays').value = appData.settings.warningDays;
+            document.getElementById('normalDuration').value = appData.settings.normalDuration;
+            document.getElementById('notificationEnabled').value = appData.settings.notificationEnabled ? "1" : "0";
+            document.getElementById('autoCalculateDeadline').checked = appData.settings.autoCalculateDeadline;
+        }
+        
+        // Update stats
+        function updateStats() {
+            // In a real app, this would fetch from server
+            const stats = {
+                total: 48,
+                akad: 12,
+                pajak: 8,
+                balikNama: 6,
+                cekHt: 15,
+                selesai: 7
+            };
+            
+            document.querySelectorAll('.stat-value')[0].textContent = stats.total;
+            document.querySelectorAll('.stat-value')[1].textContent = stats.akad;
+            document.querySelectorAll('.stat-value')[2].textContent = stats.pajak;
+            document.querySelectorAll('.stat-value')[3].textContent = stats.balikNama;
+            document.querySelectorAll('.stat-value')[4].textContent = stats.cekHt;
+            document.querySelectorAll('.stat-value')[5].textContent = stats.selesai;
+        }
+        
+        // Update deadline alerts
+        function updateDeadlineAlerts() {
+            const alertContainer = document.getElementById('deadlineAlerts');
+            alertContainer.innerHTML = '';
+            
+            let warningCount = 0;
+            let dangerCount = 0;
+            
+            appData.berkasList.forEach(berkas => {
+                const deadlineInfo = getDeadlineInfo(berkas.deadline);
+                
+                if (deadlineInfo.class.includes('danger')) {
+                    dangerCount++;
+                } else if (deadlineInfo.class.includes('warning')) {
+                    warningCount++;
+                }
+            });
+            
+            // Add warning alerts
+            if (warningCount > 0) {
+                const warningAlert = document.createElement('div');
+                warningAlert.className = 'alert alert-warning-custom alert-dismissible fade show';
+                warningAlert.innerHTML = `
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Peringatan!</strong> Terdapat ${warningCount} berkas yang mendekati deadline.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                alertContainer.appendChild(warningAlert);
+            }
+            
+            // Add danger alerts
+            if (dangerCount > 0) {
+                const dangerAlert = document.createElement('div');
+                dangerAlert.className = 'alert alert-danger-custom alert-dismissible fade show';
+                dangerAlert.innerHTML = `
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Bahaya!</strong> Terdapat ${dangerCount} berkas yang sudah melewati deadline.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                alertContainer.appendChild(dangerAlert);
+            }
+        }
+        
+        // Get deadline information
+        function getDeadlineInfo(deadlineDate) {
+            const today = new Date();
+            const deadline = new Date(deadlineDate);
+            const diffTime = deadline - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) {
+                return {
+                    class: 'deadline-danger',
+                    text: `Terlambat ${Math.abs(diffDays)} hari`
+                };
+            } else if (diffDays <= appData.settings.warningDays) {
+                return {
+                    class: 'deadline-warning',
+                    text: `Tersisa ${diffDays} hari`
+                };
+            } else {
+                return {
+                    class: 'deadline-normal',
+                    text: `Tersisa ${diffDays} hari`
+                };
+            }
+        }
+        
+        // Apply filter
+        function applyFilter() {
+            const statusFilter = document.getElementById('filterStatus').value;
+            const deadlineFilter = document.getElementById('filterDeadline').value;
+            const startDate = document.getElementById('filterStartDate').value;
+            const endDate = document.getElementById('filterEndDate').value;
+            
+            const tableBody = document.getElementById('berkasTable');
+            const rows = tableBody.querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                let showRow = true;
+                
+                // Filter by status
+                if (statusFilter) {
+                    const statusCell = row.cells[6]; // Status column
+                    const statusText = statusCell.textContent.toLowerCase();
+                    const targetStatus = getStatusLabel(statusFilter).text.toLowerCase();
+                    
+                    if (!statusText.includes(targetStatus)) {
+                        showRow = false;
+                    }
+                }
+                
+                // Filter by deadline
+                if (deadlineFilter && showRow) {
+                    const deadlineCell = row.cells[5]; // Deadline column
+                    const deadlineText = deadlineCell.textContent;
+                    
+                    // Check if deadline text contains warning/danger
+                    if (deadlineFilter === 'warning' && !deadlineText.includes('Tersisa')) {
+                        showRow = false;
+                    } else if (deadlineFilter === 'danger' && !deadlineText.includes('Terlambat')) {
+                        showRow = false;
+                    } else if (deadlineFilter === 'normal') {
+                        const hasWarning = deadlineText.includes('Tersisa') && parseInt(deadlineText) <= appData.settings.warningDays;
+                        const hasDanger = deadlineText.includes('Terlambat');
+                        
+                        if (hasWarning || hasDanger) {
+                            showRow = false;
+                        }
+                    }
+                }
+                
+                // Filter by date range
+                if ((startDate || endDate) && showRow) {
+                    const dateCell = row.cells[4]; // Tanggal Masuk column
+                    const dateText = dateCell.textContent;
+                    const cellDate = new Date(dateText.split('/').reverse().join('-'));
+                    
+                    if (startDate) {
+                        const start = new Date(startDate);
+                        if (cellDate < start) {
+                            showRow = false;
+                        }
+                    }
+                    
+                    if (endDate && showRow) {
+                        const end = new Date(endDate);
+                        if (cellDate > end) {
+                            showRow = false;
+                        }
+                    }
+                }
+                
+                row.style.display = showRow ? '' : 'none';
+            });
+        }
+        
+        // Reset filter
+        function resetFilter() {
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterDeadline').value = '';
+            document.getElementById('filterStartDate').value = '';
+            document.getElementById('filterEndDate').value = '';
+            
+            const tableBody = document.getElementById('berkasTable');
+            const rows = tableBody.querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                row.style.display = '';
+            });
+        }
+        
+        // Save settings
+        function saveSettings(e) {
+            e.preventDefault();
+            
+            appData.settings.warningDays = parseInt(document.getElementById('warningDays').value);
+            appData.settings.normalDuration = parseInt(document.getElementById('normalDuration').value);
+            appData.settings.notificationEnabled = document.getElementById('notificationEnabled').value === "1";
+            appData.settings.autoCalculateDeadline = document.getElementById('autoCalculateDeadline').checked;
+            
+            alert('Pengaturan berhasil disimpan!');
+            updateDeadlineAlerts();
+        }
+        
+        // Tambah staff
+        function tambahStaff() {
+            const nama = document.getElementById('staffNama').value;
+            const username = document.getElementById('staffUsername').value;
+            const email = document.getElementById('staffEmail').value;
+            const role = document.getElementById('staffRole').value;
+            const password = document.getElementById('staffPassword').value;
+            const confirmPassword = document.getElementById('staffConfirmPassword').value;
+            
+            if (!nama || !username || !email || !role || !password || !confirmPassword) {
+                alert('Semua field harus diisi!');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Password dan konfirmasi password tidak cocok!');
+                return;
+            }
+            
+            // Add new staff to data
+            const newId = appData.staffList.length + 1;
+            appData.staffList.push({
+                id: newId,
+                nama: nama,
+                username: username,
+                email: email,
+                role: role,
+                berkasAktif: 0,
+                status: 'Aktif'
+            });
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('tambahStaffModal'));
+            modal.hide();
+            
+            // Reset form
+            document.getElementById('tambahStaffForm').reset();
+            
+            // Reload staff table
+            loadStaffData();
+            
+            alert('Staff berhasil ditambahkan!');
+        }
+        
+        // Tambah berkas
+        function tambahBerkas() {
+            const noBerkas = document.getElementById('berkasNo').value;
+            const namaKlien = document.getElementById('berkasKlien').value;
+            const jenisAkta = document.getElementById('berkasJenis').value;
+            const tglMasuk = document.getElementById('berkasTanggal').value;
+            let deadline = document.getElementById('berkasDeadline').value;
+            const status = document.getElementById('berkasStatus').value;
+            
+            if (!noBerkas || !namaKlien || !jenisAkta || !tglMasuk || !status) {
+                alert('Harap isi semua field yang wajib!');
+                return;
+            }
+            
+            // Calculate deadline if empty and auto-calculate is enabled
+            if (!deadline && appData.settings.autoCalculateDeadline) {
+                const deadlineDate = new Date(tglMasuk);
+                deadlineDate.setDate(deadlineDate.getDate() + appData.settings.normalDuration);
+                deadline = deadlineDate.toISOString().split('T')[0];
+            }
+            
+            // Add new berkas to data
+            const newId = appData.berkasList.length + 1;
+            appData.berkasList.push({
+                id: newId,
+                noBerkas: noBerkas,
+                namaKlien: namaKlien,
+                jenisAkta: jenisAkta,
+                tglMasuk: tglMasuk,
+                deadline: deadline,
+                status: status,
+                progres: (['akad', 'pajak', 'balik-nama', 'cek-ht', 'pengembalian', 'selesai'].indexOf(status) + 1) * 20
+            });
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('tambahBerkasModal'));
+            modal.hide();
+            
+            // Reset form
+            document.getElementById('tambahBerkasForm').reset();
+            
+            // Set default values
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('berkasTanggal').value = today;
+            
+            const defaultDeadline = new Date();
+            defaultDeadline.setDate(defaultDeadline.getDate() + 30);
+            document.getElementById('berkasDeadline').value = defaultDeadline.toISOString().split('T')[0];
+            
+            // Reload tables
+            loadBerkasTable();
+            loadBerkasData();
+            updateDeadlineAlerts();
+            updateStats();
+            
+            alert('Berkas berhasil ditambahkan!');
+        }
+        
+        // Handle logout
+        function handleLogout() {
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                const logoutBtn = this;
+                const originalText = logoutBtn.innerHTML;
+                
+                logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging out...';
+                logoutBtn.disabled = true;
+                
+                setTimeout(() => {
+                    alert('Logout berhasil!');
+                    
+                    logoutBtn.innerHTML = originalText;
+                    logoutBtn.disabled = false;
+                }, 1000);
+            }
+        }
+        
+        // Helper functions
+        function getStatusLabel(status) {
+            switch(status) {
+                case 'akad': return { class: 'status-akad', text: 'Proses Akad' };
+                case 'pajak': return { class: 'status-pajak', text: 'Proses Pajak' };
+                case 'balik-nama': return { class: 'status-balik-nama', text: 'Balik Nama' };
+                case 'cek-ht': return { class: 'status-cek-ht', text: 'Cek HT' };
+                case 'pengembalian': return { class: 'status-pengembalian', text: 'Pengembalian' };
+                case 'selesai': return { class: 'status-selesai', text: 'Selesai' };
+                default: return { class: 'status-akad', text: 'Proses Akad' };
+            }
+        }
+        
+        function getProgressColor(status) {
+            switch(status) {
+                case 'akad': return 'progress-akad';
+                case 'pajak': return 'progress-pajak';
+                case 'balik-nama': return 'progress-balik-nama';
+                case 'cek-ht': return 'progress-cek-ht';
+                case 'pengembalian': return 'progress-pengembalian';
+                case 'selesai': return 'progress-selesai';
+                default: return 'progress-akad';
+            }
+        }
+        
+        function getRoleName(role) {
+            switch(role) {
+                case 'admin': return 'Admin';
+                case 'staff_pajak': return 'Staff Pajak';
+                case 'staff_balik_nama': return 'Staff Balik Nama';
+                case 'staff_ht': return 'Staff HT';
+                case 'staff_pengembalian': return 'Staff Pengembalian';
+                default: return 'Staff';
+            }
+        }
+        
+        function getRoleClass(role) {
+            switch(role) {
+                case 'admin': return 'role-admin';
+                case 'staff_pajak': return 'role-staff-pajak';
+                case 'staff_balik_nama': return 'role-staff-balik-nama';
+                case 'staff_ht': return 'role-staff-ht';
+                case 'staff_pengembalian': return 'role-staff-pengembalian';
+                default: return 'role-admin';
+            }
+        }
+        
+        function getRoleIconClass(role) {
+            switch(role) {
+                case 'admin': return 'role-admin';
+                case 'staff_pajak': return 'role-staff-pajak-icon';
+                case 'staff_balik_nama': return 'role-staff-balik-nama-icon';
+                case 'staff_ht': return 'role-staff-ht-icon';
+                case 'staff_pengembalian': return 'role-staff-pengembalian-icon';
+                default: return 'role-admin';
+            }
+        }
+        
+        function getRoleIcon(role) {
+            switch(role) {
+                case 'admin': return 'fas fa-user-shield';
+                case 'staff_pajak': return 'fas fa-receipt';
+                case 'staff_balik_nama': return 'fas fa-exchange-alt';
+                case 'staff_ht': return 'fas fa-search';
+                case 'staff_pengembalian': return 'fas fa-undo-alt';
+                default: return 'fas fa-user';
+            }
+        }
+        
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase();
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+        
+        // Action functions
+        function viewBerkas(id) {
+            const berkas = appData.berkasList.find(b => b.id === id);
+            if (berkas) {
+                const deadlineInfo = getDeadlineInfo(berkas.deadline);
+                alert(`Detail Berkas:\nNo. Berkas: ${berkas.noBerkas}\nKlien: ${berkas.namaKlien}\nJenis Akta: ${berkas.jenisAkta}\nTanggal Masuk: ${formatDate(berkas.tglMasuk)}\nDeadline: ${formatDate(berkas.deadline)} (${deadlineInfo.text})\nStatus: ${getStatusLabel(berkas.status).text}\nProgres: ${berkas.progres}%`);
+            }
+        }
+        
+        function editBerkas(id) {
+            const berkas = appData.berkasList.find(b => b.id === id);
+            if (berkas) {
+                // In a real app, open edit modal
+                alert(`Mengedit berkas: ${berkas.noBerkas}\nFitur edit akan dibuka di modal.`);
+            }
+        }
+        
+        function deleteBerkas(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus berkas ini?')) {
+                const index = appData.berkasList.findIndex(b => b.id === id);
+                if (index !== -1) {
+                    appData.berkasList.splice(index, 1);
+                    loadBerkasData();
+                    loadBerkasTable();
+                    updateStats();
+                    updateDeadlineAlerts();
+                    alert('Berkas berhasil dihapus!');
+                }
+            }
+        }
+        
+        function viewStaff(id) {
+            const staff = appData.staffList.find(s => s.id === id);
+            if (staff) {
+                const roleName = getRoleName(staff.role);
+                alert(`Detail Staff:\nNama: ${staff.nama}\nUsername: ${staff.username}\nEmail: ${staff.email}\nRole: ${roleName}\nBerkas Aktif: ${staff.berkasAktif}\nStatus: ${staff.status}`);
+            }
+        }
+        
+        function editStaff(id) {
+            const staff = appData.staffList.find(s => s.id === id);
+            if (staff) {
+                alert(`Mengedit staff: ${staff.nama}`);
+            }
+        }
+        
+        function deleteStaff(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus staff ini?')) {
+                const index = appData.staffList.findIndex(s => s.id === id);
+                if (index !== -1 && appData.staffList[index].role !== 'admin') {
+                    appData.staffList.splice(index, 1);
+                    loadStaffData();
+                    alert('Staff berhasil dihapus!');
+                } else {
+                    alert('Admin tidak dapat dihapus!');
+                }
+            }
+        }
+        
+        // Event listeners for buttons
+        document.getElementById('addBerkasBtn')?.addEventListener('click', function() {
+            // Modal already handled by data-bs-toggle
+        });
+        
+        document.getElementById('tambahBerkasBtn')?.addEventListener('click', function() {
+            // Modal already handled by data-bs-toggle
+        });
+        
+        document.getElementById('exportLaporanBtn')?.addEventListener('click', function() {
+            alert('Laporan berhasil diexport!');
+        });
+        
+        // Simulasi update data berkala
+        setInterval(() => {
+            // Update random status for demo
+            if (Math.random() > 0.7 && appData.berkasList.length > 0) {
+                const randomIndex = Math.floor(Math.random() * appData.berkasList.length);
+                const statuses = ['akad', 'pajak', 'balik-nama', 'cek-ht', 'pengembalian', 'selesai'];
+                const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                
+                appData.berkasList[randomIndex].status = randomStatus;
+                appData.berkasList[randomIndex].progres = (statuses.indexOf(randomStatus) + 1) * 20;
+                
+                // Reload tables if visible
+                if (document.getElementById('dashboard-content').style.display !== 'none') {
+                    loadBerkasTable();
+                }
+                if (document.getElementById('berkas-content').style.display !== 'none') {
+                    loadBerkasData();
+                }
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
